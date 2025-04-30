@@ -216,9 +216,6 @@ def generate_review_summary(title, author, model='llama3'):
 
 ---
 
-## 👩‍💻 Author
 
-**Bekobo Daniella**  
-_Data Engineer | SQL + AI Enthusiast_
 
 ---

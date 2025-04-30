@@ -178,20 +178,36 @@ conn.commit()
 
 ## 🤖 AI Content Generation with Ollama
 
+
+To enrich our dataset and enable comparison between human and AI-generated feedback, we implemented dynamic review and headline generation using Ollama's llama3 model. This functionality can be extended to any book in the database.
+### Importance of Prompt Design
+The quality and structure of prompts significantly influence the output from language models like llama3. In our case:
+
+Instruction clarity ensures that LLMs avoid unnecessary filler or context.
+
+Tone control keeps summaries catchy and concise.
+
+Direct formatting commands ("no extra text", "100–150 words") guide output to match our schema.
+
 **Generate Review Text:**
 ```python
 def generate_review_and_rating(title, author, model='llama3'):
-    prompt = f"Write a concise review for '{title}' by {author}."
+    prompt = f"""
+Write a concise and informative review (around 100-150 words) for the book "{title}" by {author}.
+Only output the review text directly, without any introductions or explanations.
+"""
     response = ollama.chat(model=model, messages=[{'role': 'user', 'content': prompt}])
     review = response['message']['content'].strip()
+
     rating = random.randint(2, 5)
     return review, rating
 ```
 
-**Generate Review Headline:**
+**Generate Summary:**
 ```python
 def generate_review_summary(title, author, model='llama3'):
-    prompt = f"Create a catchy review headline for '{title}' by {author}."
+    prompt = f"""Create a short, catchy review headline (less than 10 words) for the book "{title}" by {author}.
+Only return the headline, no extra text."""
     response = ollama.chat(model=model, messages=[{'role': 'user', 'content': prompt}])
     summary = response['message']['content'].strip()
     return summary

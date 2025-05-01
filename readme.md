@@ -8,7 +8,7 @@ A scalable SQL-powered framework for storing, analyzing, and comparing book meta
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
 This project merges multiple large book-related datasets, cleans and normalizes the data, and stores it in a SQL database.
 It prepares the foundation for an API that generates AI-based reviews and summaries, enabling rich comparison between human feedback and LLM-generated responses to explore alignment, deviation, and accuracy.
@@ -17,7 +17,7 @@ We also implemented automated review and headline generation using prompts on Ol
 
 ---
 
-## 🗂️ Key Features
+## Key Features
 
 - Normalized SQL schema for books, reviews, and summaries
 - Efficient ingestion of 3M+ reviews using `pandas`
@@ -29,7 +29,7 @@ We also implemented automated review and headline generation using prompts on Ol
 
 ---
 
-## 📊 Dataset Overview
+##  Dataset Overview
 
 | Dataset | Rows | Key Columns |
 |:--------|:-----|:------------|
@@ -45,13 +45,13 @@ After full cleaning and processing of the dataset, we obtained the following ins
 
 📚 Unique book titles: 1,825
 
-✍️ Unique authors: 1,292
+ Unique authors: 1,292
 
-📖 Unique (title, author) combinations: 1,969
+ Unique (title, author) combinations: 1,969
 
-🕵️ Titles shared by multiple authors: 110
+ Titles shared by multiple authors: 110
 
-📈 Average reviews per (title, author) combination: ~158.12 reviews
+ Average reviews per (title, author) combination: ~158.12 reviews
 
 Interestingly, no two books with the same title but different authors shared the same ISBN — confirming the distinct identity of each book despite title overlaps.
 
@@ -59,7 +59,7 @@ These insights confirm the quality of our cleaned dataset and lay the foundation
 
 ---
 
-## 🔄 ETL and Cleaning Process
+##  ETL and Cleaning Process
 
 ### Step 1: Extract
 - Load `books.csv` and `books_1.Best_Books_Ever.csv`.
@@ -143,7 +143,7 @@ conn.commit()
 
 ---
 
-## 🏗️ Database Schema
+##  Database Schema
 
 ### `books`
 | Column | Type | Description |
@@ -212,21 +212,33 @@ Only return the headline, no extra text."""
     summary = response['message']['content'].strip()
     return summary
 ```
+🌐 Flask API for On-Demand AI Reviews
+ 
+To make it easy to request a review or summary for any book already stored in our database — and to generate a new one via LLM if none exists — we built a lightweight Flask API that automatically generates and stores AI-powered reviews using **Ollama's LLaMA3 model**.
 
+## API Logic Flow
+
+1. **User sends a GET request** to `/get_reviews` with `title` and `author` as query parameters.
+2. **API checks** if the book exists in the `books_table`.
+3. If **reviews already exist** in `reviews_test`, they are returned.
+4. If **no reviews exist**:
+   - It calls `generate_review_summary()` to create a catchy review title.
+   - It calls `generate_review_and_rating()` to generate the full review and a random rating.
+   - The review is inserted into the `reviews_test` table with `source = 'AI'`.
+5. **JSON response** is returned with all available reviews.
 ---
 
-## 💾 Tech Stack
+## Tech Stack
 
-- Python (`pandas`, `PyMySQL`)
+- Python (`pandas`, `PyMySQL. Flask`)
 - MySQL (cloud-hosted)
 - Ollama (LLM API)
 
 ---
 
-## 📈 Future Work
+##  Future Work
 
-- Real-time Ollama-based generation
-- REST API for summaries and reviews
+
 - Text similarity scoring and sentiment analysis
 - Full visualization dashboard (Plotly/Dash/Streamlit)
 
